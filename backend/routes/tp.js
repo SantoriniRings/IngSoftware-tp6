@@ -1,5 +1,6 @@
 const express = require('express');
 const tp = express.Router();
+const nodemailer = require('nodemailer');
 
 tp.use(express.urlencoded({ extended: false }));
 
@@ -126,6 +127,36 @@ tp.get('/pedidos_transportista', (req, res) => {
             });
         });
     });
+});
+
+var transporter = nodemailer.createTransport({
+	service: 'gmail',
+	auth: {
+		user: 'patobonetto@gmail.com',
+		pass: 'jyyz bmho paxx ywcr',
+	},
+});
+
+tp.post('/api/enviarEmail', (request, response) => {
+	const email = request.body;
+
+	console.log('Destinatario: ' + email.destinatario);
+	const mailOptions = {
+		from: 'info@tangoapp.com',
+		to: email.destinatario,
+		subject: 'Se ha creado una solicitud de envío en tu zona',
+		text: `Se ha creado una solicitud de envío de ${email.tipoCarga} `,
+	};
+
+	transporter.sendMail(mailOptions, function (error, info) {
+		if (error) {
+			console.log(error);
+		} else {
+			console.log('Email sent: ' + info.response);
+		}
+	});
+
+	response.json(email);
 });
 
 module.exports = tp;
