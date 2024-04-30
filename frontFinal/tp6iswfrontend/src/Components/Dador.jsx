@@ -199,6 +199,12 @@ const Dador = () => {
     try {
       await axios.post('http://localhost:3001/tp/pedido', formData);
       setOpen(true);
+
+      await axios.post('http://localhost:3001/tp/api/enviarEmail', {
+        destinatario: 'juanandrada_07_@hotmail.com', 
+        tipoCarga: formData.tipo_carga
+      });
+
       setFormData({
         tipo_carga: '',
         localidadRetiro: '',
