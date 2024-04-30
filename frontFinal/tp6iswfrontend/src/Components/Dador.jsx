@@ -10,6 +10,7 @@ import DialogActions from '@mui/material/DialogActions';
 import { formatISO } from 'date-fns';
 import { TfiBackLeft } from "react-icons/tfi";
 import Snackbar from '@mui/material/Snackbar';
+import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 
 const InputField = ({ label, name, type, min, value, onChange, error }) => (
@@ -41,6 +42,9 @@ const Dador = () => {
   const [previewImage2, setPreviewImage2] = useState(null);
   const [file2, setFile2] = useState(null);
   const [open, setOpen] = React.useState(false);
+  const [openCircular, setOpenCircular] = useState(false);
+  const [openCircular2, setOpenCircular2] = useState(false);
+  const [imagenAlerta, setImagenAlerta] = useState(false);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -109,11 +113,15 @@ const Dador = () => {
   };
   
   const handleImageUpload = async () => {
+    setOpenCircular(true);
+
     try {
       if (file) {
         const imageUrl = await uploadFile(file);
         setFormData({ ...formData, imagen: imageUrl });
         console.log(imageUrl);
+        setOpenCircular(false);
+        setImagenAlerta(true);
       } else {
         setFileError('Debe ingresar la imagen');
       }
@@ -139,19 +147,22 @@ const Dador = () => {
   };
   
   const handleImageUpload2 = async () => {
+    setOpenCircular2(true);
+
     try {
       if (file2) {
         const imageUrl = await uploadFile(file2);
         setFormData({ ...formData, imagen2: imageUrl });
         console.log(imageUrl);
+        setOpenCircular2(false);
+        setImagenAlerta(true);
       } else {
         setFileError('Debe ingresar la imagen');
       }
     } catch (error) {
       console.error('Error al subir la imagen 2:', error);
     }
-  };
-  
+  }; 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -252,14 +263,15 @@ const Dador = () => {
                     <input type='file' name='imagen' onChange={handleFileChange} />
                     {previewImage && <img src={previewImage} alt='Preview' style={{ maxWidth: '200px' }} />}
                     <button type='button' onClick={handleImageUpload} className='bg-tp-oxfordblue text-tp-silver rounded-xl p-2'>
-                      Subir Imagen
+                      Subir Imagen { openCircular && <CircularProgress className='w-6 h-6'/> }
                     </button>
                     <input type='file' name='imagen2' onChange={handleFileChange2} />
                     {previewImage2 && <img src={previewImage2} alt='Preview' style={{ maxWidth: '200px' }} />}
                     <button type='button' onClick={handleImageUpload2} className='bg-tp-oxfordblue text-tp-silver rounded-xl p-2'>
-                      Subir Imagen 2
+                      Subir Imagen 2 { openCircular2 && <CircularProgress className='w-6 h-6'/> }
                     </button>
                     {fileError && <p className='text-red-600 font-semibold text-center'>{fileError}</p>}
+                    { imagenAlerta && <p className='text-green-600 font-semibold text-center'>¡Imagen subida correctamente!</p> }
                   </label>
                 </DialogContent>
                 <DialogActions style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
